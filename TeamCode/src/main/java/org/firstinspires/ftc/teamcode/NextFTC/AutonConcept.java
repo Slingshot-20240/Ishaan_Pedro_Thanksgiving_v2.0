@@ -171,7 +171,7 @@ public class AutonConcept extends NextFTCOpMode {
             //--------Preloads--------\\
             //Shoot Preloads
             new ParallelGroup(
-                    new FollowPath(scorePreloads),
+                    new FollowPath(scorePreloads,true),
                     //SHOOTER FIRST SET SPEED
                     AutonConceptSequences.INSTANCE.intakeSet(1060)
             ),
@@ -192,7 +192,7 @@ public class AutonConcept extends NextFTCOpMode {
 
             //Shoot Set 2
             new SequentialGroup(
-                    new FollowPath(scoreSet2),
+                    new FollowPath(scoreSet2, true),
                     AutonConceptSequences.INSTANCE.scoreSet(0,2.6)
             ),
 
@@ -209,7 +209,7 @@ public class AutonConcept extends NextFTCOpMode {
 
             //Shoot Set 3
             new SequentialGroup(
-                    new FollowPath(scoreSet3),
+                    new FollowPath(scoreSet3, true),
                     AutonConceptSequences.INSTANCE.scoreSet(0,2.6)
             ),
 
@@ -227,7 +227,7 @@ public class AutonConcept extends NextFTCOpMode {
 
             //Shoot Set 4
             new SequentialGroup(
-                    new FollowPath(scoreSet4),
+                    new FollowPath(scoreSet4, true),
                     AutonConceptSequences.INSTANCE.scoreSet(0,2.6)
             )
 
