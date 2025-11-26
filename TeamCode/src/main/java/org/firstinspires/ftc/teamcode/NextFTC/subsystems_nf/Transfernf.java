@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.NextFTC.subsystems;
+package org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -6,9 +6,9 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.powerable.SetPower;
 
-public class Transfer implements Subsystem {
-    public static final Transfer INSTANCE = new Transfer();
-    private Transfer() {}
+public class Transfernf implements Subsystem {
+    public static final Transfernf INSTANCE = new Transfernf();
+    private Transfernf() {}
 
     public CRServoEx frontTransfer;
     public CRServoEx backTransfer;

@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.NextFTC.sequences_and_groups;
 
 
 
-import org.firstinspires.ftc.teamcode.NextFTC.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.NextFTC.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.NextFTC.subsystems.Transfer;
-import org.firstinspires.ftc.teamcode.NextFTC.subsystems.VariableHood;
+import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Intakenf;
+import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Shooternf;
+import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Transfernf;
+import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.Hoodnf;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -20,8 +20,8 @@ public class AutonConceptSequences extends SubsystemGroup {
         super(
                 AutonConceptSequences.INSTANCE,
                 AutonConceptHWS.INSTANCE,
-                Intake.INSTANCE, Transfer.INSTANCE,
-                Shooter.INSTANCE, VariableHood.INSTANCE
+                Intakenf.INSTANCE, Transfernf.INSTANCE,
+                Shooternf.INSTANCE, Hoodnf.INSTANCE
         );
     }
 
@@ -32,7 +32,7 @@ public class AutonConceptSequences extends SubsystemGroup {
      */
     public final Command scoreSet(double speedUpTime, double transferTime) {
         return new SequentialGroup(
-                Intake.INSTANCE.in(),
+                Intakenf.INSTANCE.in(),
                 new SequentialGroup(
                         new Delay(speedUpTime),
                         AutonConceptHWS.INSTANCE.transferUpFor(transferTime)
@@ -46,9 +46,9 @@ public class AutonConceptSequences extends SubsystemGroup {
      */
     public final Command intakeSet(double shooterPower) {
         return new ParallelGroup(
-                Intake.INSTANCE.in(),
-                Transfer.INSTANCE.hotdog(),
-                Shooter.INSTANCE.setShooterVel(shooterPower)
+                Intakenf.INSTANCE.in(),
+                Transfernf.INSTANCE.hotdog(),
+                Shooternf.INSTANCE.setShooterVel(shooterPower)
         );
     }
 

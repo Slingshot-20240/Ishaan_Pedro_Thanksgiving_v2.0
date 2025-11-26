@@ -1,15 +1,14 @@
-package org.firstinspires.ftc.teamcode.NextFTC.subsystems;
+package org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf;
 
-import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
 
-public class Intake implements Subsystem {
-    public static final Intake INSTANCE = new Intake();
-    private Intake() { }
+public class Intakenf implements Subsystem {
+    public static final Intakenf INSTANCE = new Intakenf();
+    private Intakenf() { }
 
     public MotorEx intake;
 
@@ -28,13 +27,13 @@ public class Intake implements Subsystem {
     }
 
     public Command in() {
-        return new SetPower(intake, Intake.intakeStates.IN.getState());
+        return new SetPower(intake, Intakenf.intakeStates.IN.getState());
     }
     public Command idle() {
-        return new SetPower(intake, Intake.intakeStates.IDLE.getState());
+        return new SetPower(intake, Intakenf.intakeStates.IDLE.getState());
     }
     public Command out() {
-        return new SetPower(intake, Intake.intakeStates.OUT.getState());
+        return new SetPower(intake, Intakenf.intakeStates.OUT.getState());
     }
 
     @Override

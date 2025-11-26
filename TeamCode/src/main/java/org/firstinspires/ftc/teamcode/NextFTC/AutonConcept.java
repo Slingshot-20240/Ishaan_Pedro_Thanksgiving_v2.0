@@ -9,13 +9,12 @@ import com.pedropathing.paths.PathChain;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.NextFTC.sequences_and_groups.AutonConceptSequences;
-import org.firstinspires.ftc.teamcode.NextFTC.subsystems.*;
+import org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -31,8 +30,8 @@ public class AutonConcept extends NextFTCOpMode {
         addComponents(
                 new SubsystemComponent(
                         AutonConceptSequences.INSTANCE,
-                        Intake.INSTANCE, Transfer.INSTANCE,
-                        Shooter.INSTANCE, VariableHood.INSTANCE
+                        Intakenf.INSTANCE, Transfernf.INSTANCE,
+                        Shooternf.INSTANCE, Hoodnf.INSTANCE
                 ),
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE
