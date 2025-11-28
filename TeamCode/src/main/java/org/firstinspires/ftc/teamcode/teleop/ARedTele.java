@@ -51,7 +51,7 @@ public class ARedTele extends OpMode {
         pathChain = () -> follower.pathBuilder()
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(38.7, 33.4))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(
-                        //TODO - Edit endT Threshold
+                        //TODO - Edit endT threshold
                         follower::getHeading, Math.toRadians(90), 0.9)
                 )
                 .build();
@@ -87,7 +87,7 @@ public class ARedTele extends OpMode {
     // Heading lock -------------------------------------------------------------------
 
         // Auto-turn if not already turning if "a" is clicked
-        if (gamepad1.a && !autoTurn) {
+        if (gamepad1.aWasPressed() && !autoTurn) {
             autoTurn = true;
             goalHeading = Math.atan2(144 - y, 144 - x);
         }
