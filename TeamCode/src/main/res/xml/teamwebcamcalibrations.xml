@@ -52,6 +52,16 @@
 -->
 <Calibrations>
 
+    <!-- Change focal length to tune distance, increase in focal length = increase-->
+    <Camera vid="0x328F" pid="0x00EA">
+        <Calibration
+            size="1920 1080"
+            focalLength="1640.000f, 1640.000f"
+            principalPoint="960.000f, 540.000f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
+            />
+    </Camera>
+
     <!-- ======================================================================================= -->
 
     <!-- Microsoft Lifecam HD 3000 v1, Calibrated by PTC using unknown tooling -->

@@ -38,12 +38,16 @@ public class HoodServoTest extends OpMode {
         intake.intakeOn();
         controls.update();
         //robot.drivetrain.update();
+
         robot.shooter.setShooterVelocity(-power);
+        //robot.shooter.setShooterPower(-power);
         variableHood.setPosition(servoPos);
 
         // right bumper
         //if (controls.transfer.value()) {
             robot.transfer.transferOn();
+        telemetry.addData("Current shooter vel",robot.shooter.outtake1.getVelocity());
+        telemetry.update();
         //}
         // left bumper
 //        if (controls.intake.value()) {

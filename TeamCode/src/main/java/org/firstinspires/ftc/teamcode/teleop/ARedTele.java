@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.misc.gamepad.GamepadMapping;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.robot.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.vision.logi;
 import org.firstinspires.ftc.teamcode.teleop.fsm.FSM;
 
 import java.util.function.Supplier;
@@ -26,11 +27,10 @@ import java.util.function.Supplier;
 @TeleOp
 public class ARedTele extends OpMode {
 
-    /** @noinspection FieldCanBeLocal*/
     private GamepadMapping controls;
     private FSM fsm;
     private Robot robot;
-
+    private logi cam;
 
     private Follower follower;
     private boolean automatedDrive;
@@ -44,6 +44,7 @@ public class ARedTele extends OpMode {
     public void init() {
         controls = new GamepadMapping(gamepad1, gamepad2);
         robot = new Robot(hardwareMap, controls);
+        cam = new logi(hardwareMap);
         fsm = new FSM(hardwareMap, controls, robot);
 
         follower = Constants.createFollower(hardwareMap);
@@ -52,23 +53,21 @@ public class ARedTele extends OpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
         pathChain = () -> follower.pathBuilder()
-                .addPath(new Path(new BezierLine(follower::getPose, new Pose(38.7, 33.4))))
+                .addPath(new Path(new BezierLine(
+                        follower::getPose,
+                        new Pose(105.4, 33.4)
+                )))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(
-                        //TODO - Edit endT threshold
                         follower::getHeading, Math.toRadians(90), 0.9)
                 )
                 .build();
-
     }
 
-    /** This initializes the PoseUpdater, the mecanum drive motors, and the Panels telemetry. */
     @Override
     public void init_loop() {
-        telemetryM.debug("This will print your robot's position to telemetry while "
-                + "allowing robot control through a basic mecanum drive on gamepad 1.");
+        telemetryM.debug("This will print your robot's position to telemetry while allowing robot control.");
         telemetryM.update(telemetry);
         follower.update();
-        drawOnlyCurrent();
     }
 
     @Override
@@ -80,81 +79,77 @@ public class ARedTele extends OpMode {
 
     @Override
     public void loop() {
-    //Updates fsm, follower, and telemetry systems
+
         fsm.update();
         follower.update();
         telemetryM.update();
         telemetry.update();
-        draw();
 
-
-    //Robot pose from localization ---------------------------------------------------
         Pose pose = follower.getPose();
         double x = pose.getX();
         double y = pose.getY();
         double heading = pose.getHeading();
 
-    //Relocalizes robot --------------------------------------------------------------
-        if (gamepad1.xWasPressed()) {
-            follower.setPose(new Pose(126, 118, Math.toRadians(36)));
-        }
+        double atBearing = Math.toRadians(cam.getATangle());
+        double atDistance = cam.getATdist();
 
-    // Heading lock -------------------------------------------------------------------
+        double distance = Math.sqrt(Math.pow((137 - pose.getX()), 2) + Math.pow((137 - pose.getY()), 2));
 
-        // Auto-turn if not already turning if "a" is clicked
-        //IF A WAS PRESSED DOES NOT WORK, then just do a
-        if (gamepad1.aWasPressed() && !autoTurn) {
+        // Start AprilTag auto-turn
+        if (gamepad1.a && !autoTurn) {
             autoTurn = true;
-            goalHeading = Math.atan2(144 - y, 144 - x);
         }
 
-        //gets heading error and angle wraps it.
-        double headingError = angleWrap(goalHeading - heading);
-        //checks if turn is finished (2 degree threshold)
-        boolean turnFinished = Math.abs(headingError) < Math.toRadians(2);
-        //turns turn mode off if its in turn mode and the turn is finished
-        if (autoTurn && turnFinished) {
-            //HOLDS THE POINT WHEN SHOOTING TODO - check if this works
-            follower.holdPoint(follower.getPose());
+        double atHeadingError = angleWrap(atBearing);
+        boolean atTurnFinished = Math.abs(atHeadingError) < Math.toRadians(0.4);
+
+        if (autoTurn && atTurnFinished || gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
             autoTurn = false;
         }
 
-    // Driving inputs -------------------------------------------------------------
         double forward = -gamepad1.left_stick_y;
         double strafe  = -gamepad1.left_stick_x;
         double rotate;
 
         if (autoTurn) {
-            //Makes sure robot cannot go straight or strafe when turning
+
+            // Disable driver movement while aligning
             forward = 0;
             strafe = 0;
-            //Proportional gain for turn
-            //TODO - tune this
-            double Kp = 0.8;
-            rotate = headingError * Kp;
+
+            // P controller + minimum power assist
+            double Kp = 0.95;
+            rotate = atHeadingError * Kp;
+
+            double minPower = 0.04; // tune this
+
+            if (Math.abs(rotate) < minPower && Math.abs(atHeadingError) > Math.toRadians(0.5)) {
+                rotate = Math.signum(rotate) * minPower;
+            }
+
         } else {
-            //if auto turn isn't deciding the turn rate, then it just gets it fom gamepad for regular driving
             rotate = -gamepad1.right_stick_x;
         }
-        //Sets Drive to have driver inputs
+
         follower.setTeleOpDrive(forward, strafe, rotate, true);
 
-
-    // Auto park -------------------------------------------------------------------
         if (gamepad1.startWasPressed()) {
             follower.followPath(pathChain.get());
             automatedDrive = true;
         }
 
-        //Checks if path in progress, or if "b", the cancel button is pressed
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
             follower.startTeleopDrive();
             automatedDrive = false;
         }
 
-    //Telemetry -------------------------------------------------------------------
         telemetry.addData("pose", pose);
         telemetry.addData("Heading", heading);
+        telemetry.addData("Distance", distance);
+
+        telemetry.addData("AT angle", cam.getATangle());
+        telemetry.addData("AT distance", cam.getATdist());
+
         telemetry.addLine("--------------------------------");
         telemetry.addData("autoTurn", autoTurn);
         telemetry.addData("Automated Drive", automatedDrive);
@@ -162,14 +157,8 @@ public class ARedTele extends OpMode {
     }
 
     private double angleWrap(double angle) {
-        while (angle > Math.PI) {
-            angle -= 2 * Math.PI;
-        }
-        while (angle < -Math.PI) {
-            angle += 2 * Math.PI;
-        }
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
         return angle;
     }
-
-
 }

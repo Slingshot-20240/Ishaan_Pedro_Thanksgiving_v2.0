@@ -1,20 +1,16 @@
 package org.firstinspires.ftc.teamcode.NextFTC.subsystems_nf;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.feedback.PIDCoefficients;
-import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 
-
 @Configurable
-@TeleOp
 public class Shooternf implements Subsystem {
     public static final Shooternf INSTANCE = new Shooternf();
     private Shooternf() { }
@@ -23,15 +19,10 @@ public class Shooternf implements Subsystem {
     public MotorGroup shooter;
 
     private final ControlSystem shooterController = ControlSystem.builder()
-            .velPid(new PIDCoefficients(p, i, d))
-            .basicFF(new BasicFeedforwardParameters(kV, kA, kS))
+            .velPid(0.35)
             .build();
 
-    private boolean enabled = false;
-
-    public static double p = 0.1, i = 0, d = 0.01;
-    public static double kV = 0, kA = 0, kS = 0;
-    public static int shooterVel = -1167;
+    private boolean enabled = false;   // <--- ADD THIS
 
     private enum shooterStates {
         IDLE (0),
@@ -62,7 +53,7 @@ public class Shooternf implements Subsystem {
 
     public void disable() {
         enabled = false;
-        shooter.setPower(0); //stops motor from spinning during init
+        shooter.setPower(0); //prevents shooter on in init
     }
 
     @Override

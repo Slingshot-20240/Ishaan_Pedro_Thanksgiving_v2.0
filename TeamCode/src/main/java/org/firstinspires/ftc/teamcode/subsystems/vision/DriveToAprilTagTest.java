@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.subsystems.vision;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -200,7 +202,7 @@ public class DriveToAprilTagTest extends LinearOpMode
                 telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             } else {
 
-                // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
+                // drive using manual POV Joystick mode.  Slow things down to make the robot more controllable.
                 drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
                 strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
                 turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
@@ -269,7 +271,11 @@ public class DriveToAprilTagTest extends LinearOpMode
         if (USE_WEBCAM) {
             visionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .addProcessor(aprilTag)
+                    .addProcessors(aprilTag)
+                    .setCameraResolution(new Size(1920, 1080))
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    .setAutoStopLiveView(true)
+                    .enableLiveView(true)
                     .build();
         } else {
             visionPortal = new VisionPortal.Builder()
