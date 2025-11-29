@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
+import dev.nextftc.control.feedforward.BasicFeedforward;
 import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -47,4 +48,22 @@ public class NextFTCShooterPID extends OpMode {
 
         //shooter.setPower(shooterController.calculate(shooter.getState()));
     }
+//    @Override
+//    public void loop() {
+//        shooterController.setGoal(new KineticState(0.0, shooterVel));
+//
+//        double pidOut = shooterController.calculate(shooter.getState());
+//
+//        // Single-constant Feedforward
+//        double ffOut = f * shooterVel;
+//
+//        // Combine PID + FF
+//        double power = pidOut + ffOut;
+//
+//        // Clamp to [-1, 1]
+//        power = Math.max(-1.0, Math.min(1.0, power));
+//
+//        shooter.setPower(power);
+//    }
+
 }
