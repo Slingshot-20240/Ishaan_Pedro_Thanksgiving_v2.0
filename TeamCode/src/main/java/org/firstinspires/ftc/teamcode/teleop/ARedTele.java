@@ -38,6 +38,8 @@ public class ARedTele extends OpMode {
     private TelemetryManager telemetryM;
 
     private boolean autoTurn = false;
+    private boolean autoTurnOdo = false;
+    private boolean autoTurnVision = false;
     private double goalHeading = 0;
 
     @Override
@@ -95,38 +97,49 @@ public class ARedTele extends OpMode {
 
         double distance = Math.sqrt(Math.pow((137 - pose.getX()), 2) + Math.pow((137 - pose.getY()), 2));
 
-        // Start AprilTag auto-turn
-        if (gamepad1.a && !autoTurn) {
-            autoTurn = true;
+        if (gamepad1.a && !autoTurnOdo) {
+            autoTurnOdo = true;
+            goalHeading = Math.atan2(146 - y, 146 - x);
         }
 
-        double atHeadingError = angleWrap(atBearing);
-        boolean atTurnFinished = Math.abs(atHeadingError) < Math.toRadians(0.4);
+        if (gamepad1.dpad_down && !autoTurnVision) {
+            autoTurnVision = true;
+        }
 
-        if (autoTurn && atTurnFinished || gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
-            autoTurn = false;
+        double odoHeadingError = angleWrap(goalHeading - heading);
+        boolean odoTurnFinished = Math.abs(odoHeadingError) < Math.toRadians(3);
+
+        double atHeadingError = angleWrap(atBearing);
+        boolean visionTurnFinished = Math.abs(atHeadingError) < Math.toRadians(0.4);
+
+        if ((autoTurnOdo && odoTurnFinished) || (autoTurnVision && visionTurnFinished)
+                || gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
+            autoTurnOdo = false;
+            autoTurnVision = false;
         }
 
         double forward = -gamepad1.left_stick_y;
         double strafe  = -gamepad1.left_stick_x;
         double rotate;
 
-        if (autoTurn) {
-
-            // Disable driver movement while aligning
+        if (autoTurnOdo) {
             forward = 0;
             strafe = 0;
-
-            // P controller + minimum power assist
+            double Kp = 0.95;
+            rotate = odoHeadingError * Kp;
+            double minPower = 0.04;
+            if (Math.abs(rotate) < minPower && Math.abs(odoHeadingError) > Math.toRadians(0.5)) {
+                rotate = Math.signum(rotate) * minPower;
+            }
+        } else if (autoTurnVision) {
+            forward = 0;
+            strafe = 0;
             double Kp = 0.95;
             rotate = atHeadingError * Kp;
-
-            double minPower = 0.04; // tune this
-
+            double minPower = 0.08;
             if (Math.abs(rotate) < minPower && Math.abs(atHeadingError) > Math.toRadians(0.5)) {
                 rotate = Math.signum(rotate) * minPower;
             }
-
         } else {
             rotate = -gamepad1.right_stick_x;
         }
@@ -151,9 +164,9 @@ public class ARedTele extends OpMode {
         telemetry.addData("AT distance", cam.getATdist());
 
         telemetry.addLine("--------------------------------");
-        telemetry.addData("autoTurn", autoTurn);
+        telemetry.addData("Odo AutoTurn", autoTurnOdo);
+        telemetry.addData("Vision AutoTurn", autoTurnVision);
         telemetry.addData("Automated Drive", automatedDrive);
-
     }
 
     private double angleWrap(double angle) {
