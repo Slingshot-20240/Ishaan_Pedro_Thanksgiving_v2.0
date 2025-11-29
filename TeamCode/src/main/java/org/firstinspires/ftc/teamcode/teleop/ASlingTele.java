@@ -23,7 +23,6 @@ public class ASlingTele extends OpMode {
         controls = new GamepadMapping(gamepad1, gamepad2);
         robot = new Robot(hardwareMap, controls);
         fsm = new FSM(hardwareMap, controls, robot);
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
@@ -37,10 +36,7 @@ public class ASlingTele extends OpMode {
     public void loop() {
         fsm.update();
         telemetry.update();
-        //TODO - yeah so basically idk how to make the dt move, so add that in :)
-
         robot.drivetrain.update();
-
     }
 
 
