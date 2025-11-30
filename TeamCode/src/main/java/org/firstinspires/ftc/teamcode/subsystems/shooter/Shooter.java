@@ -41,7 +41,7 @@ public class Shooter {
     }
 
     //-----------------Math-----------------\\
-    private static final double g = 9.793;
+    private static final double g = 9.79284;
     // y distance to goal - to the middle of the shooter
     private static final double H = 0.360837;
     private static double shootVel;
