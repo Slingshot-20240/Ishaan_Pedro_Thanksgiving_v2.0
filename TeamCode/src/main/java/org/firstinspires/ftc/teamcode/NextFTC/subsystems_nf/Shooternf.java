@@ -22,7 +22,7 @@ public class Shooternf implements Subsystem {
             .velPid(0.35)
             .build();
 
-    private boolean enabled = false;   // <--- ADD THIS
+    private boolean enabled = false;
 
     private enum shooterStates {
         IDLE (0),
@@ -44,7 +44,7 @@ public class Shooternf implements Subsystem {
         return new RunToVelocity(shooterController, shooterStates.IDLE.getState());
     }
     public Command setShooterVel(double shooterVel) {
-        return new RunToVelocity(shooterController, shooterVel);
+        return new RunToVelocity(shooterController, shooterVel).requires(shooter);
     }
 
     public void enable() {
