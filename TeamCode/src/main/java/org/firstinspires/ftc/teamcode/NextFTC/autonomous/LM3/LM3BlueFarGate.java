@@ -36,84 +36,100 @@ public class LM3BlueFarGate extends NextFTCOpMode {
         );
     }
 
-    public PathChain scorePreloads, grabSet2, gate, scoreSet2, grabSet3, scoreSet3, prepareHp, backOutHp, grabHp, scoreHp, park;
+    public PathChain scorePreloads, grabSet2, prepareGate, hitGate, scoreSet2, grabSet3, scoreSet3, prepareHp, backOutHp, grabHp, scoreHp, park;
+    public PathChain turnToHp;
 
     private double mx(double x) { return 144 - x; }
 
     private double mh(double deg) {
         if (deg == 0) return 180;
         if (deg == 180) return 0;
-        if (deg == 90 || deg == 270) return deg;
+        if (deg == 90 || deg == 268) return deg;
         return 180 - deg;
     }
 
     Pose scorePose = new Pose(mx(88), 17);
 
     public void buildPaths() {
+        PedroComponent.follower().setStartingPose(new Pose(mx(88), 8.2, Math.toRadians(mh(90))));
+
         scorePreloads = PedroComponent.follower()
                 .pathBuilder()
                 .addPath(new BezierLine(new Pose(mx(88), 8), scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(90)), Math.toRadians(mh(70)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(90)), Math.toRadians(mh(68)))
                 .build();
 
         grabSet2 = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierCurve(scorePose, new Pose(mx(84), 67.5), new Pose(mx(135.5), 58.5)))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(70)), Math.toRadians(mh(0)))
+                .addPath(new BezierCurve(scorePose, new Pose(mx(84), 65), new Pose(mx(132), 57)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(68)), Math.toRadians(mh(0)))
                 .build();
 
-        gate = PedroComponent.follower()
+        prepareGate = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierCurve(new Pose(mx(135.5), 58.5), new Pose(mx(102), 55), new Pose(mx(128), 67.75)))
+                .addPath(new BezierLine(new Pose(mx(132), 57), new Pose(26, 54)))
+
                 .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(90)))
+                .build();
+
+        hitGate = PedroComponent.follower()
+                .pathBuilder()
+                .addPath(new BezierLine( new Pose(26, 54), new Pose(mx(130), 68)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(90)), Math.toRadians(mh(90)))
                 .build();
 
         scoreSet2 = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierCurve(new Pose(mx(128), 67.75), new Pose(mx(85), 60.5), scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(90)), Math.toRadians(mh(70)))
+                .addPath(new BezierCurve(new Pose(mx(130), 68), new Pose(mx(85), 60.5), scorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(90)), Math.toRadians(mh(68)))
                 .build();
 
         grabSet3 = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierCurve(scorePose, new Pose(mx(89.75), 40), new Pose(mx(135.5), 36)))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(70)), Math.toRadians(mh(0)))
+                .addPath(new BezierCurve(scorePose, new Pose(mx(87), 36), new Pose(mx(134), 32.8)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(68)), Math.toRadians(mh(0)))
                 .build();
 
         scoreSet3 = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierLine(new Pose(mx(135.5), 36), scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(70)))
+                .addPath(new BezierLine(new Pose(mx(134), 32.8), scorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(68)))
                 .build();
 
-        prepareHp = PedroComponent.follower()
-                .pathBuilder()
-                .addPath(new BezierLine(scorePose, new Pose(mx(135.5), 36)))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(70)), Math.toRadians(mh(0)))
-                .build();
+//        prepareHp = PedroComponent.follower()
+//                .pathBuilder()
+//                .addPath(new BezierLine(scorePose, new Pose(mx(134), 24)))
+//                .setLinearHeadingInterpolation(Math.toRadians(mh(68)), Math.toRadians(mh(0)))
+//                .build();
 
-        backOutHp = PedroComponent.follower()
+//        backOutHp = PedroComponent.follower()
+//                .pathBuilder()
+//                .addPath(new BezierLine(new Pose(mx(134), 24), new Pose(mx(134),40)))
+//                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(-80)))
+//                .build();
+
+        turnToHp = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierLine(new Pose(mx(135.5), 36), new Pose(mx(134), 36)))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(-80)))
+                .addPath(new BezierLine(scorePose, new Pose(mx(24), 45)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(68)), Math.toRadians(mh(290)))
                 .build();
 
         grabHp = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierLine(new Pose(mx(134), 36), new Pose(mx(134), 11)))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(-80)), Math.toRadians(mh(-80)))
+                .addPath(new BezierLine(new Pose(mx(12), 45), new Pose(mx(12), 11)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(290)), Math.toRadians(mh(290)))
                 .build();
 
         scoreHp = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierLine(new Pose(mx(134), 11), scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(-80)), Math.toRadians(mh(70)))
+                .addPath(new BezierLine(new Pose(mx(100), 11), scorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(0)), Math.toRadians(mh(68)))
                 .build();
 
         park = PedroComponent.follower()
                 .pathBuilder()
-                .addPath(new BezierLine(scorePose, new Pose(mx(119), 70)))
-                .setLinearHeadingInterpolation(Math.toRadians(mh(70)), Math.toRadians(mh(90)))
+                .addPath(new BezierLine(scorePose, new Pose(mx(119), 68)))
+                .setLinearHeadingInterpolation(Math.toRadians(mh(68)), Math.toRadians(mh(90)))
                 .build();
     }
 
@@ -143,47 +159,51 @@ public class LM3BlueFarGate extends NextFTCOpMode {
                         new ParallelGroup(
                                 new FollowPath(scorePreloads, true),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1500)
+                                Shooternf.INSTANCE.setShooterVel(-1515)
                         ),
-                        new Delay(0.4),
+                        new Delay(0.7),
                         transferUpFor(2.2),
 
                         // SET 2
                         new ParallelGroup(
                                 new SequentialGroup(
                                         new FollowPath(grabSet2),
+                                        new FollowPath(prepareGate),
+                                        new FollowPath(hitGate),
                                         new FollowPath(scoreSet2, true)
                                 ),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1500)
+                                Shooternf.INSTANCE.setShooterVel(-1515)
                         ),
-                        new Delay(0.2),
+                        new Delay(0.5),
                         transferUpFor(2.6),
 
                         // SET 3
                         new ParallelGroup(
                                 new SequentialGroup(
                                         new FollowPath(grabSet3),
-                                        new FollowPath(scoreSet3, true)
+                                        new FollowPath(scoreSet3)
                                 ),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1500)
+                                Shooternf.INSTANCE.setShooterVel(-1515)
                         ),
-                        new Delay(0.2),
+                        new Delay(0.5),
                         transferUpFor(2.6),
 
                         // Human Player
                         new ParallelGroup(
                                 new SequentialGroup(
-                                        new FollowPath(prepareHp),
-                                        new FollowPath(backOutHp),
+                                        //new FollowPath(prepareHp),
+                                        //new Delay(0.3),
+                                        new FollowPath(grabHp),
                                         new FollowPath(scoreHp, true)
                                 ),
                                 baseState(),
-                                Shooternf.INSTANCE.setShooterVel(-1500)
+                                Shooternf.INSTANCE.setShooterVel(-1515)
                         ),
-                        new Delay(0.2),
-                        transferUpFor(4)
+                        new Delay(0.5),
+                        transferUpFor(4),
+                        new FollowPath(park)
                 )
         );
     }
