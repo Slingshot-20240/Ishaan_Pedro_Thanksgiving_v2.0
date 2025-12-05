@@ -46,16 +46,18 @@ public class Shooter {
     private static final double H = 0.360837;
     private static double shootVel;
 
+    // calculates target velocity depending on the distance the robot is from the goal
     public double calculateShooterVel() {
         double R = ARedTele.pinpointDistance;
         shootVel = Math.sqrt(H * g + g * Math.sqrt(Math.pow(R, 2) + Math.pow(H, 2)));
         return convertMPSToRPM(shootVel);
     }
 
+    // converts the target velocity from meters per second to rpm for DcMotor
     public static double convertMPSToRPM(double mpsVel) {
-        double c = -1.79086;
-        double a = 20.10912;
-        double b = 0.000374598;
+        double c = -2.28611;
+        double a = 12.79622;
+        double b = 0.000790302;
         double lnArgument = 1.0 - ((mpsVel - c)/a);
         return -Math.log(lnArgument)/b; // Math.log is natural logarithm
     }
@@ -64,10 +66,19 @@ public class Shooter {
     // ---------------------------------
     private static double hoodAngle;
 
+    // TODO: change to vision if nerd says camera no longer broken
+    // returns the target angle in degrees depending on our distance from the april tag
     public double calculateHoodAngle() {
         double R = ARedTele.pinpointDistance;
         hoodAngle = Math.atan(Math.pow(calculateShooterVel(), 2)/(g * R));
-        return hoodAngle;
+        return Math.toRadians(hoodAngle);
+    }
+
+    // converts the target angle from calculateHoodAngle() to a servo position from 0-1
+    public double convertTargetAngleToHoodPos(double targetAngle) {
+        double m = 42.8718;
+        double b = 37.09643;
+        return (targetAngle - b)/m;
     }
 
     public static double getShootVel() {
